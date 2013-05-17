@@ -10,6 +10,7 @@ var swipe = function () {
 
     // Private methods.
     function addSwipeEndListener () {
+        removeSwipeEndListener.call(this);
         this.target.addEventListener("webkitTransitionEnd", this.callback, false);
     }
 
@@ -22,8 +23,8 @@ var swipe = function () {
         y = y || 0;
         z = z || 0;
         speed = speed || 0;
+        this.target.style.webkitTransition = "all " + speed + "s";
         this.target.style.webkitTransform = "translate3d(" + x + "px, " + y + "px, " + z + "px)";
-        this.target.style.webkitTransition = "transform " + speed + "s";
     }
 
     // Public methods.
@@ -32,7 +33,7 @@ var swipe = function () {
     };
 
     SWIPE.prototype.freeze = function () {
-        removeSwipeEndListener().call(this);
+        removeSwipeEndListener.call(this);
         var half_way_rectangle = this.target.getBoundingClientRect();
         sliding.call(this,
             half_way_rectangle.left - this.rectangle.left,
@@ -50,9 +51,9 @@ var swipe = function () {
 
     SWIPE.prototype.to = function (x, y, z, speed, easing) {
         var args = Array.prototype.splice.call(arguments, 0);
-        args[3] = args[3] || 1.4;
+        args[3] = !isNaN( args[3] ) && args[3].toString() || 1.4;
+        addSwipeEndListener.call(this);
         sliding.apply(this, args);
-        addSwipeEndListener().call(this);
     };
 
     SWIPE.prototype.rollback = function () {
