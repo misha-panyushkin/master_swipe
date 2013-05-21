@@ -4,8 +4,9 @@ var swipe = function () {
 
     var SWIPE = function (target) {
         this.target = target;
-        this.rectangle = null;
-        this.callback = function () {};
+        this.start_rectangle    = {};
+        this.rectangle          = {};
+        this.callback = null;
     };
 
     // Private methods.
@@ -22,34 +23,52 @@ var swipe = function () {
         x = x || 0;
         y = y || 0;
         z = z || 0;
-        speed = speed || 0;
+        speed = speed || 0.0001;
         this.target.style.webkitTransition = "all " + speed + "s";
         this.target.style.webkitTransform = "translate3d(" + x + "px, " + y + "px, " + z + "px)";
     }
 
     // Public methods.
+    SWIPE.prototype.setCallback = function (f) {
+        this.callback = function (swiped) {
+            return function () {
+                swiped.target.style.webkitTransition = "none";
+                swiped.target.style.webkitTransform = "translate3d(" + 0 + "px, " + 0 + "px, " + 0 + "px)";
+                swiped.target.style.left  = swiped.start_rectangle.left + swiped.XShift + "px";
+                swiped.target.style.top   = swiped.start_rectangle.top  + swiped.YShift + "px";
+                f();
+            }
+        } (this)
+    };
+
     SWIPE.prototype.grasp = function () {
-        this.rectangle = this.target.getBoundingClientRect()
+        this.rectangle = this.target.getBoundingClientRect();
+        for (var i in this.rectangle) if (this.rectangle.hasOwnProperty(i)) {
+            this.start_rectangle[i] = this.rectangle[i]
+        }
     };
 
     SWIPE.prototype.freeze = function () {
         removeSwipeEndListener.call(this);
-        var half_way_rectangle = this.target.getBoundingClientRect();
         sliding.call(this,
-            half_way_rectangle.left - this.rectangle.left,
-            half_way_rectangle.top  - this.rectangle.top,
+            this.rectangle.left    - this.start_rectangle.left,
+            this.rectangle.top     - this.start_rectangle.top,
             0,
-            0
-        );
+            0);
     };
 
     SWIPE.prototype.steer = function (x, y, z, speed, easing) {
         var args = Array.prototype.splice.call(arguments, 0);
+        args[0] = (args[0] || 0);
+        args[1] = (args[1] || 0);
         args[3] = args[3] || 0;
         sliding.apply(this, args);
     };
 
     SWIPE.prototype.to = function (x, y, z, speed, easing) {
+        this.XShift = x;
+        this.YShift = y;
+        this.ZShift = z;
         var args = Array.prototype.splice.call(arguments, 0);
         args[3] = !isNaN( args[3] ) && args[3].toString() || 1.4;
         addSwipeEndListener.call(this);
