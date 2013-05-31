@@ -5,7 +5,10 @@ var swipe = function () {
     var SWIPE = function (target) {
         this.target = target;
         this.start_rectangle    = {};
-        this.rectangle          = {};
+        this.ontheway_rectangle = {
+            left:   0,
+            top:    0
+        };
         this.callback = null;
     };
 
@@ -42,25 +45,23 @@ var swipe = function () {
     };
 
     SWIPE.prototype.grasp = function () {
-        this.rectangle = this.target.getBoundingClientRect();
-        for (var i in this.rectangle) if (this.rectangle.hasOwnProperty(i)) {
-            this.start_rectangle[i] = this.rectangle[i]
-        }
+        this.start_rectangle = this.ontheway_rectangle = this.target.getBoundingClientRect()
     };
 
     SWIPE.prototype.freeze = function () {
         removeSwipeEndListener.call(this);
+        this.ontheway_rectangle = this.target.getBoundingClientRect();
         sliding.call(this,
-            this.rectangle.left    - this.start_rectangle.left,
-            this.rectangle.top     - this.start_rectangle.top,
+            this.ontheway_rectangle.left    - this.start_rectangle.left,
+            this.ontheway_rectangle.top     - this.start_rectangle.top,
             0,
             0);
     };
 
     SWIPE.prototype.steer = function (x, y, z, speed, easing) {
         var args = Array.prototype.splice.call(arguments, 0);
-        args[0] = (args[0] || 0);
-        args[1] = (args[1] || 0);
+        args[0] = this.ontheway_rectangle.left    - this.start_rectangle.left + (args[0] || 0);
+        args[1] = this.ontheway_rectangle.top    - this.start_rectangle.top  + (args[1] || 0);
         args[3] = args[3] || 0;
         sliding.apply(this, args);
     };
