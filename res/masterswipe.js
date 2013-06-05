@@ -81,7 +81,7 @@ var swipe = function () {
     };
 
     return function (target) {
-        targets[target] = targets[target] || new SWIPE(target);
-        return targets[target];
+        targets[target.id] = targets[target.id] || new SWIPE(target);
+        return targets[target.id];
     };
 }();
