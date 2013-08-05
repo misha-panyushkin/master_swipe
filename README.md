@@ -15,8 +15,18 @@ Pass a document element you want to animate as first argument into it:
 
 `swipe (element)`
 
-It'will return an object with several methods:
+It'll return an object with several methods:
 
-	setCallback: function ( function_Shoul_Call_On_Animation_Finished ) {},
-	steer:		 fucntion ( x, y, z, speed, easing ) {},
-	to:			 fucntion ( x, y, z, speed, easing ) {}
+	track   (x, y, z, speed, easing),
+	from    (x, y, z),
+	offset  (x, y, z, speed, easing),
+	stop    (),
+
+	setCallback (Function_Should_Call_On_Animation_Finished)
+	
+--	
+TODO
+
+Problems are:
+
+- IOS blink dragging element at some limen (text inside element longer than 2258 symbols);
