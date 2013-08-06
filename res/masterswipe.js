@@ -52,6 +52,7 @@
         },
 
         setCallback: function (f) {
+            removeSwipeEndListener.call(this);
             this.callback = function (swiped) {
                 return function () {
 
@@ -72,7 +73,6 @@
             var f = function (that) {
                 return function () {
                     removeSwipeEndListener.call(that);
-                    console.log("callback!");
                     var rect = that.target.getBoundingClientRect();
 
                     that.target.style.webkitTransition = "";
@@ -81,7 +81,7 @@
                     that.target.style.left  = (!isNaN(that.fromX) && (that.fromX + that.offsetX) || (rect.left + window.scrollX)) + "px";
                     that.target.style.top   = (!isNaN(that.fromY) && (that.fromY + that.offsetY) || (rect.top  + window.scrollY)) + "px";
 
-                    that.formX = that.formY = that.fromZ = undefined;
+                    that.fromX = that.fromY = that.fromZ = undefined;
                 };
             } (this);
 
@@ -125,7 +125,6 @@
 
             if (noOffset) {
                 this.callback();
-                console.log("no offset!");
             } else {
                 addSwipeEndListener.call(this);
                 sliding.apply(this, args);
