@@ -29,4 +29,4 @@ TODO
 
 Problems are:
 
-- IOS blink dragging element at some limen (text inside element longer than 2258 symbols);
+- ANDROID couldn't stop current transition;
