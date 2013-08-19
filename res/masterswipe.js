@@ -29,6 +29,8 @@
 
         this.target.style.webkitTransitionProperty  = "-webkit-transform";
         this.target.style.webkitTransitionDuration  = speed + "s";
+        if (easing)
+            this.target.style.webkitTransitionTimingFunction  = easing;
         this.target.style.webkitTransform = "translate3d(" + x + "px, " + y + "px, " + z + "px)";
 
     }
@@ -52,12 +54,12 @@
         },
 
         setCallback: function (f) {
+
             removeSwipeEndListener.call(this);
             this.callback = function (swiped) {
+
                 return function () {
-
                     swiped.stop();
-
                     f.call(swiped.target);
                 }
             } (this);
@@ -66,34 +68,28 @@
         },
 
         stop: function(x, y, z) {
-            var f = function (that) {
-                return function () {
-                    removeSwipeEndListener.call(that);
-                    //var rect = that.target.getBoundingClientRect();
 
-                    if (x && y && z) {
+            var f = function (that) {
+
+                return function () {
+
+                    removeSwipeEndListener.call(that);
+
+                    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
 
                         that.target.style.webkitTransitionProperty  = "-webkit-transform";
                         that.target.style.webkitTransitionDuration  = "0s";
+                        that.target.style.webkitTransitionTimingFunction = "linear";
                         that.target.style.webkitTransform = "translate3d(" + (x || 0) + "px, " + (y || 0) + "px, " + (z || 0) + "px)";
 
                     } else {
 
                         that.target.style.webkitTransitionProperty  = "";
                         that.target.style.webkitTransitionDuration  = "";
+                        that.target.style.webkitTransitionTimingFunction = "";
                         that.target.style.webkitTransform = "";
 
                     }
-
-                    /*
-                     * Nice reflow, that works in -webkit- ANDROID every time.
-                     * */
-                    that.target.style.display = "table";
-                    that.target.offsetHeight;
-                    that.target.style.display = "block";
-
-                    //that.target.style.left  = (!isNaN(that.fromX) && (that.fromX + that.offsetX) || (rect.left + window.scrollX)) + "px";
-                    //that.target.style.top   = (!isNaN(that.fromY) && (that.fromY + that.offsetY) || (rect.top  + window.scrollY)) + "px";
 
                     that.fromX = that.fromY = that.fromZ = undefined;
                 };
